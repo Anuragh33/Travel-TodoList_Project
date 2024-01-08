@@ -11,11 +11,16 @@ const initialItems = [
 ]
 
 export default function App() {
+  const [items, setItems] = useState([])
+
+  function handleAddItems(item) {
+    setItems((items) => [...items, item])
+  }
   return (
     <div>
       <Logo />
-      <Form />
-      <PackingList />
+      <Form onAddItems={handleAddItems} />
+      <PackingList items={items} />
       <Stats />
     </div>
   )
@@ -29,10 +34,10 @@ function Logo() {
   )
 }
 
-function Form() {
+function Form({ onAddItems }) {
   const [description, setDescription] = useState("")
 
-  const [qty, setQty] = useState(1)
+  const [quantity, setQuantity] = useState(1)
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -40,20 +45,25 @@ function Form() {
     if (!description) return
     const newItem = {
       description,
-      qty,
+      quantity,
       packed: false,
       id: Math.floor(Math.random() * 10000),
     }
 
     setDescription("")
-    setQty(1)
+    setQuantity(1)
+
+    onAddItems(newItem)
     // console.log(newItem)
   }
 
   return (
     <form className="add-form" onSubmit={handleSubmit}>
       <h3>You need these for your trip.</h3>
-      <select value={qty} onChange={(e) => setQty(Number(e.target.value))}>
+      <select
+        value={quantity}
+        onChange={(e) => setQuantity(Number(e.target.value))}
+      >
         {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
           <option value={num} key={num}>
             {num}
@@ -70,11 +80,11 @@ function Form() {
     </form>
   )
 }
-function PackingList() {
+function PackingList({ items }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => (
+        {items.map((item) => (
           <Item item={item} key={item.id} />
         ))}
       </ul>
@@ -86,7 +96,8 @@ function Item({ item }) {
   return (
     <li>
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
-        {item.description} {item.quantity}
+        {item.quantity}
+        {item.description}
       </span>
       <button>❌</button>
     </li>
