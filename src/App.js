@@ -14,7 +14,11 @@ export default function App() {
   const [items, setItems] = useState(initialItems)
 
   function handleClearList() {
-    setItems([])
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all items?"
+    )
+
+    if (confirmed) setItems([])
   }
 
   function handleAddItems(item) {
